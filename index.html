@@ -1,0 +1,41 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Grade Calculator</h1>
+        <p>Enter your test scores below</p>
+        
+        <div class="input-group">
+            <label>Test 1 Score:</label>
+            <input type="number" id="test1" placeholder="0-100" min="0" max="100">
+        </div>
+        
+        <div class="input-group">
+            <label>Test 2 Score:</label>
+            <input type="number" id="test2" placeholder="0-100" min="0" max="100">
+        </div>
+        
+        <div class="input-group">
+            <label>Test 3 Score:</label>
+            <input type="number" id="test3" placeholder="0-100" min="0" max="100">
+        </div>
+        
+        <div class="input-group">
+            <label>Test 4 Score:</label>
+            <input type="number" id="test4" placeholder="0-100" min="0" max="100">
+        </div>
+        
+        <button onclick="calculateGrade()">Calculate Grade</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

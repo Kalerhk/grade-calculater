@@ -18,18 +18,42 @@ function calculateGrade() {
     else if (average >= 60) gradeLetter = 'D';
     else                    gradeLetter = 'F';
 
-    let resultDiv = document.getElementById('result');
     let isPassing = average >= 60;
+    let teacher = document.getElementById('teacher');
+    let teacherEmoji = document.getElementById('teacherEmoji');
+    let resultDiv = document.getElementById('result');
 
+    // Reset teacher first
+    teacher.classList.remove('happy', 'angry');
+
+    setTimeout(() => {
+        if (isPassing) {
+            teacherEmoji.textContent = '🥳'; // party face when pass
+            teacher.classList.add('happy');
+        } else {
+            teacherEmoji.textContent = '😡'; // angry face when fail
+            teacher.classList.add('angry');
+        }
+
+        // Go back to normal teacher after 2 seconds
+        setTimeout(() => {
+            teacher.classList.remove('happy', 'angry');
+            teacherEmoji.textContent = '👨‍🏫';
+        }, 2000);
+    }, 50);
+
+    // Show result box
     resultDiv.classList.remove('show', 'pass', 'fail');
 
     setTimeout(() => {
         resultDiv.innerHTML = `
+            <div class="result-message">${isPassing ? '🎉 Congratulations!' : '😤 Study Harder!'}</div>
             <div>Your Average: <span id="counter">0</span>%</div>
             <div>Grade: ${gradeLetter}</div>
         `;
         resultDiv.classList.add('show', isPassing ? 'pass' : 'fail');
 
+        // Count up number animation
         let current = 0;
         let target = average;
         let step = target / 60;
@@ -43,3 +67,4 @@ function calculateGrade() {
             document.getElementById('counter').textContent = current.toFixed(2);
         }, 1000 / 60);
     }, 50);
+}

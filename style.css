@@ -1,189 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+/* Custom CSS Variables & Styling adjustments */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* Background dots simulation for the elegant bento canvas context */
 body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%) !important;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+  background-color: #FFFBEB;
+  background-image: radial-gradient(#1A1A1A 1.5px, transparent 1.5px), radial-gradient(#1A1A1A 1.5px, #FFFBEB 1.5px);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+  opacity: 0.98;
 }
 
-/* page loads: card floats up */
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to   { opacity: 1; transform: translateY(0); }
+/* Base custom font configuration */
+* {
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-/* result appears: grows from small */
-@keyframes popIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to   { opacity: 1; transform: scale(1); }
+/* Custom shadow classes */
+.retro-btn-style {
+  box-shadow: 4px 4px 0px 0px rgba(26,26,26,1);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.retro-btn-style:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px rgba(26,26,26,1);
 }
 
-/* teacher floats up and down when idle */
-@keyframes idle {
-    0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-8px); }
+/* Style default ranges / sliders for premium look */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: #FF6B6B;
+  border: 3px stroke #1a1a1a;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0px 0px #1A1A1A;
 }
 
-/* teacher jumps when you pass */
-@keyframes bounce {
-    0%   { transform: translateY(0) rotate(0deg); }
-    25%  { transform: translateY(-25px) rotate(-15deg); }
-    50%  { transform: translateY(-10px) rotate(15deg); }
-    75%  { transform: translateY(-20px) rotate(-10deg); }
-    100% { transform: translateY(0) rotate(0deg); }
+/* Tab active styles */
+.tab-btn {
+  background: white;
+  border-color: black;
+  color: #1A1A1A;
+  font-weight: 900;
+  box-shadow: 2px 2px 0px 0px rgba(0,0,0,1);
+}
+.tab-btn.active {
+  background: #FF6B6B;
+  color: white;
+  border-color: black;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  transform: scale(1.02);
 }
 
-/* teacher shakes when you fail */
-@keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20%     { transform: translateX(-12px) rotate(-8deg); }
-    40%     { transform: translateX(12px) rotate(8deg); }
-    60%     { transform: translateX(-12px) rotate(-8deg); }
-    80%     { transform: translateX(12px) rotate(8deg); }
+/* Animation Utilities for elements */
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.animate-bounce-slow {
+  animation: bounceSlow 3.5s ease-in-out infinite;
 }
 
-.container {
-    background: #ffffff !important;
-    color: #333333 !important;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    width: 100%;
-    max-width: 420px;
-    animation: fadeInUp 0.6s ease-out;
+/* SVG MASCOT ANIMATION HOOKS */
+#mascot-head {
+  transform-origin: 100px 90px;
+  transition: transform 0.3s ease;
+}
+#mascot-left-arm {
+  transform-origin: 45px 125px;
+  transition: transform 0.3s ease;
+}
+#mascot-right-arm {
+  transform-origin: 153px 123px;
+  transition: transform 0.3s ease;
 }
 
-/* teacher emoji section */
-.teacher {
-    text-align: center;
-    font-size: 55px;
-    margin-bottom: 10px;
-    animation: idle 2s ease-in-out infinite;
-    display: block;
+/* Mascot states when talking / interactive styling */
+.mascot-talking #mascot-head {
+  animation: nodShort 0.8s ease;
+}
+.mascot-waving #mascot-right-arm {
+  animation: waveRight 1s ease;
+}
+.mascot-poke #mascot-svg-wrap {
+  animation: wiggleScale 0.5s ease;
 }
 
-.teacher.happy {
-    animation: bounce 0.9s ease-in-out;
+/* Mascot Animation Keyframes */
+@keyframes nodShort {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  30% { transform: translateY(5px) rotate(2deg); }
+  75% { transform: translateY(-3px) rotate(-1deg); }
 }
 
-.teacher.angry {
-    animation: shake 0.6s ease-in-out;
+@keyframes waveRight {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(18deg); }
+  50% { transform: rotate(-8deg); }
+  75% { transform: rotate(12deg); }
 }
 
-.stick {
-    font-size: 28px;
-    margin-left: 5px;
-}
-
-h1 {
-    text-align: center;
-    color: #222 !important;
-    margin-bottom: 5px;
-    font-weight: 700;
-    font-size: 24px;
-}
-
-p {
-    text-align: center;
-    color: #777 !important;
-    margin-bottom: 25px;
-    font-size: 14px;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 6px;
-    color: #333 !important;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 16px;
-    font-family: 'Poppins', sans-serif;
-    background: #fafafa !important;
-    color: #333 !important;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-input:focus {
-    outline: none;
-    border-color: #f5576c;
-    box-shadow: 0 0 0 4px rgba(245, 87, 108, 0.15);
-    background: #fff !important;
-}
-
-button {
-    width: 100%;
-    padding: 15px;
-    background: linear-gradient(135deg, #f093fb, #f5576c);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    font-family: 'Poppins', sans-serif;
-    cursor: pointer;
-    margin-top: 10px;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
-}
-
-button:active {
-    transform: scale(0.97);
-}
-
-.result {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 12px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    display: none;
-}
-
-.result.show {
-    display: block;
-    animation: popIn 0.4s ease-out;
-}
-
-.result.pass {
-    background: linear-gradient(135deg, #a8edea, #fed6e3) !important;
-    color: #155724 !important;
-    border: 2px solid #84d8b5;
-}
-
-.result.fail {
-    background: linear-gradient(135deg, #ffecd2, #fcb69f) !important;
-    color: #7d2c1e !important;
-    border: 2px solid #f5a58a;
-}
-
-.result-message {
-    font-size: 20px;
-    margin-bottom: 8px;
+@keyframes wiggleScale {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(0.9) rotate(-4deg); }
+  75% { transform: scale(1.05) rotate(4deg); }
 }

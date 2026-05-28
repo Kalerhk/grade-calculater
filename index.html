@@ -1,45 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light">
-    <title>Grade Calculator</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bento Academy Grade Hub</title>
+  <!-- Tailwind CSS Play CDN & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-    <div class="container">
+<body class="bg-[#FFFBEB] text-[#1A1A1A] font-sans min-h-screen p-4 md:p-8 relative selection:bg-rose-200 overflow-x-hidden">
 
-        <div class="teacher" id="teacher">
-            <span id="teacherEmoji">👨‍🏫</span>
-            <span class="stick">📏</span>
+  <!-- FLOWER SCATTER CANVAS CELEBRATION -->
+  <canvas id="flower-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-[9999]"></canvas>
+
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- MAIN HERO BANNER AND HEADER -->
+    <header class="bg-white border-8 border-black rounded-[36px] p-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] relative overflow-hidden">
+      <div class="absolute -right-4 -bottom-4 w-44 h-44 bg-[#FFE66D] rounded-full filter blur-3xl opacity-35"></div>
+      
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+        <div>
+          <span class="bg-[#FF6B6B] text-white border-4 border-black text-xs font-black uppercase tracking-widest px-3.5 py-1.5 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] inline-block mb-3.5">
+            🎓 BENTO ACADEMY
+          </span>
+          <h1 class="text-4xl md:text-5xl font-black tracking-tighter leading-none text-[#1A1A1A] uppercase">
+            Interactive Grade Hub
+          </h1>
+          <p class="text-xs md:text-sm font-black text-stone-500 uppercase tracking-wider mt-2">
+            Real-time calculations, dynamic study character, and "what-if" simulations
+          </p>
         </div>
 
-        <h1>Grade Calculator</h1>
-        <p>Enter your test scores below</p>
+        <!-- APP TABS BAR -->
+        <div class="flex flex-wrap gap-2.5 bg-[#FFFBEB] border-4 border-black p-2 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <button onclick="switchTab('weighted')" id="tab-weighted" class="tab-btn px-4 py-2.5 text-xs font-black rounded-lg border-2 border-transparent transition-all uppercase uppercase cursor-pointer">
+            ⚖️ Weighted Average
+          </button>
+          <button onclick="switchTab('gpa')" id="tab-gpa" class="tab-btn px-4 py-2.5 text-xs font-black rounded-lg border-2 border-transparent transition-all uppercase cursor-pointer">
+            🏫 GPA Setup
+          </button>
+          <button onclick="switchTab('final')" id="tab-final" class="tab-btn px-4 py-2.5 text-xs font-black rounded-lg border-2 border-transparent transition-all uppercase cursor-pointer">
+            🎯 Final Exam
+          </button>
+        </div>
+      </div>
+    </header>
 
-        <div class="input-group">
-            <label>Test 1 Score:</label>
-            <input type="number" id="test1" placeholder="0-100" min="0" max="100">
-        </div>
-        <div class="input-group">
-            <label>Test 2 Score:</label>
-            <input type="number" id="test2" placeholder="0-100" min="0" max="100">
-        </div>
-        <div class="input-group">
-            <label>Test 3 Score:</label>
-            <input type="number" id="test3" placeholder="0-100" min="0" max="100">
-        </div>
-        <div class="input-group">
-            <label>Test 4 Score:</label>
-            <input type="number" id="test4" placeholder="0-100" min="0" max="100">
-        </div>
-
-        <button onclick="calculateGrade()">Calculate Grade</button>
-
-        <div id="result" class="result"></div>
+    <!-- MOTIVATIONAL BANNER (SHOWS ONLY WHEN FAILING / AVERAGE < 60%) -->
+    <div id="fail-banner" class="hidden bg-[#FFE66D] border-8 border-black rounded-[32px] p-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] flex flex-col md:flex-row items-center gap-6 relative overflow-hidden transition-all animate-bounce-slow">
+      <div class="absolute top-2 right-4 text-3xl opacity-25">⭐</div>
+      <div class="absolute bottom-2 left-4 text-2xl opacity-20">🌱</div>
+      
+      <div class="w-16 h-16 bg-[#FF6B6B] rounded-2xl flex items-center justify-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-shrink-0 transform -rotate-6">
+        <span class="text-3xl">🌱</span>
+      </div>
+      
+      <div class="flex-1">
+        <h2 class="text-xl md:text-2xl font-black text-black tracking-tighter uppercase leading-none">
+          Never Lose Hope! <span class="bg-[#4ECDC4] text-black px-2.5 py-1 rounded-lg border-2 border-black inline-block mt-1 transform rotate-1">F.A.I.L.</span> Is Your <span class="underline decoration-4 decoration-[#FF6B6B]">First Attempt In Learning</span>!
+        </h2>
+        <p class="text-xs md:text-sm font-extrabold text-stone-700 mt-2 leading-relaxed uppercase tracking-wide">
+          Every academic barrier is just a stepping stone! Scroll to the What-If simulation below to verify how extra tasks instantly lift your average into a passing mark. Ms. Maple stands with you! 🎒🌱
+        </p>
+      </div>
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <!-- MAIN GRID CONTAINER -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+      
+      <!-- LEFT MODULE: MS. MAPLE STATS TEAM (MASCOT MODULE) -->
+      <div class="xl:col-span-4 bg-white border-8 border-black rounded-[36px] p-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] sticky top-6">
+        
+        <!-- MASCOT BUBBLE SPEECH -->
+        <div class="relative bg-white border-8 border-black text-[#1A1A1A] px-5 py-4 rounded-[32px] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-start gap-3.5 mb-8">
+          <div class="absolute w-5 h-5 bg-white border-r-8 border-b-8 border-black rotate-45 -bottom-3.5 left-1/2 -ml-2.5"></div>
+          <div class="bg-[#FFFBEB] border-2 border-black p-1.5 rounded-xl flex-shrink-0 text-md">💬</div>
+          <div class="flex-1">
+            <span class="text-[10px] font-black text-[#FF6B6B] block uppercase tracking-wider mb-0.5">Ms. Maple Speaks:</span>
+            <p id="mascot-speech" class="text-sm font-extrabold leading-relaxed">
+              Hello, ambitious student! Ready to analyze your report card metrics today? Let's begin!
+            </p>
+          </div>
+        </div>
+
+        <!-- SVG ANIMATED MASCOT -->
+        <div class="relative flex flex-col items-center justify-center py-4 select-none group">
+          <!-- Custom indicator badge -->
+          <div class="absolute -top-4 bg-[#FFE66D] text-black text-[10px] font-black px-2.5 py-1 rounded-lg border-4 border-black opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] pointer-events-none z-10">
+            ⭐ POKE ME!
+          </div>
+
+          <div id="mascot-svg-wrap" class="w-56 h-72 cursor-pointer transition-transform" onclick="pokeMascot()">
+            <!-- SVG Mascot Ms. Maple -->
+            <svg viewBox="0 0 200 250" class="w-full h-full">
+              <!-- Shadow base -->
+              <ellipse cx="100" cy="235" rx="55" ry="10" fill="#E2E8F0" />
+              
+              <!-- Left Arm (Holding textbook) -->
+              <g id="mascot-left-arm">
+                <path d="M45,120 Q20,130 35,160 Q55,145 55,125" fill="#FF8A8A" stroke="#1A1A1A" stroke-width="6" />
+                <rect x="15" y="145" width="25" height="35" rx="5" fill="#FFE66D" stroke="#1A1A1A" stroke-width="5" transform="rotate(-15, 20, 145)" />
+                <path d="M12,148 Q8,144 12,140" stroke="#1A1A1A" stroke-width="5" fill="none" />
+              </g>
+
+              <!-- Body / Dress with Neo-brutalist buttons -->
+              <path d="M60,110 L140,110 L155,225 L45,225 Z" fill="#4ECDC4" stroke="#1A1A1A" stroke-width="6" />
+              <circle cx="100" cy="140" r="6" fill="#1A1A1A" />
+              <circle cx="100" cy="170" r="6" fill="#1A1A1A" />
+              <circle cx="100" cy="200" r="6" fill="#1A1A1A" />
+
+              <!-- Mascot Head & Neck -->
+              <rect x="90" y="85" width="20" height="30" fill="#FFD2B2" stroke="#1A1A1A" stroke-width="6" />
+              <g id="mascot-head">
+                <circle cx="100" cy="65" r="42" fill="#FFD2B2" stroke="#1A1A1A" stroke-width="6" />
+                
+                <!-- Shiny Red Maple Hair -->
+                <path d="M58,55 Q100,20 142,55 Q135,15 100,10 Q65,15 58,55" fill="#FF6B6B" stroke="#1A1A1A" stroke-width="6" />
+                <rect x="58" y="45" width="10" height="25" rx="4" fill="#FF6B6B" stroke="#1A1A1A" stroke-width="4" />
+                <rect x="132" y="45" width="10" height="25" rx="4" fill="#FF6B6B" stroke="#1A1A1A" stroke-width="4" />
+                
+                <!-- Friendly Study Glasses -->
+                <circle cx="82" cy="65" r="16" fill="none" stroke="#1A1A1A" stroke-width="5" />
+                <circle cx="118" cy="65" r="16" fill="none" stroke="#1A1A1A" stroke-width="5" />
+                <line x1="98" y1="65" x2="102" y2="65" stroke="#1A1A1A" stroke-width="5" />
+                
+                <!-- Eyes underneath glasses -->
+                <circle class="mascot-eye" cx="82" cy="65" r="4.5" fill="#1A1A1A" />
+                <circle class="mascot-eye" cx="118" cy="65" r="4.5" fill="#1A1A1A" />
+                
+                <!-- Rosy Cheeks & Smile -->
+                <circle cx="68" cy="78" r="5" fill="#FF8A8A" opacity="0.6" />
+                <circle cx="132" cy="78" r="5" fill="#FF8A8A" opacity="0.6" />
+                <path d="M92,82 Q100,92 108,82" fill="none" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round" />
+              </g>
+
+              <!-- Right Arm & Interactive Pointer Stick -->
+              <g id="mascot-right-arm">
+                <path d="M150,120 Q180,110 170,140 Q150,145 145,123" fill="#FF8A8A" stroke="#1A1A1A" stroke-width="6" />
+                <!-- Pointer stick -->
+                <line x1="168" y1="130" x2="195" y2="75" stroke="#8B4513" stroke-width="6" stroke-linecap="round" />
+                <circle cx="195" cy="75" r="5" fill="#FFD700" stroke="#1A1A1A" stroke-width="2" />
+              </g>
+            </svg>
+          </div>
+
+          <!-- TEACHER INTERACTION TRIGGERS -->
+          <div class="flex flex-wrap items-center justify-center gap-3.5 mt-5">
+            <button onclick="speakJoke()" class="flex items-center gap-1.5 px-4 py-2.5 text-[11px] font-black uppercase tracking-wider bg-[#FFE66D] hover:bg-[#FFE66D]/90 text-black rounded-xl border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none cursor-pointer">
+              📢 Tell a Joke
+            </button>
+            <button onclick="explainWeight()" class="flex items-center gap-1.5 px-4 py-2.5 text-[11px] font-black uppercase tracking-wider bg-[#4ECDC4] hover:bg-[#4ECDC4]/90 text-black rounded-xl border-4 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none cursor-pointer">
+              💡 Explain Weights
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT MODULES: DISPLAY TARGET TAB CONTENTS -->
+      <main class="xl:col-span-8 space-y-6">
+        
+        <!-- MODULE: WEIGHTED CALCULATOR TAB -->
+        <section id="pane-weighted" class="tab-pane space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- LEFT COLUMN: INPUT DATA FORM -->
+            <div class="lg:col-span-7 bg-white border-8 border-black rounded-[36px] p-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-xl font-black text-[#1A1A1A] tracking-tighter uppercase">
+                    🎓 Weighted Courses Setup
+                  </h3>
+                  <button onclick="seedSampleWeighted()" class="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-[#4ECDC4] hover:bg-[#4ECDC4]/90 text-black rounded-md border-2 border-black">
+                    🔄 Load Preset
+                  </button>
+                </div>
+                
+                <form id="weighted-form" onsubmit="addWeightedCategory(event)" class="space-y-4 mb-6">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div class="md:col-span-1">
+                      <label class="text-[10px] uppercase font-black text-[#1A1A1A] block mb-1">Grade Category</label>
+                      <input type="text" id="w-name" placeholder="e.g. Exams, Homework" class="w-full text-xs font-black border-4 border-black p-2.5 bg-white rounded-xl focus:bg-stone-50" required>
+                    </div>
+                    <div>
+                      <label class="text-[10px] uppercase font-black text-[#1A1A1A] block mb-1">Score Obtained (%)</label>
+                      <input type="number" id="w-score" placeholder="e.g. 85" min="0" max="300" step="0.1" class="w-full text-xs font-black border-4 border-black p-2.5 bg-white rounded-xl focus:bg-stone-50" required>
+                    </div>
+                    <div>
+                      <label class="text-[10px] uppercase font-black text-[#1A1A1A] block mb-1">Weight Value (%)</label>
+                      <input type="number" id="w-weight" placeholder="e.g. 40" min="1" max="100" class="w-full text-xs font-black border-4 border-black p-2.5 bg-white rounded-xl focus:bg-stone-50" required>
+                    </div>
+                  </div>
+                  
+                  <button type="submit" class="w-full bg-[#4ECDC4] hover:bg-[#4ECDC4]/90 text-black font-black text-xs py-3 rounded-xl border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] uppercase tracking-wider transition-all active:translate-x-[2px] active:translate-y-[2px] active:shadow-none cursor-pointer">
+                    ➕ Add Grade Component
+                  </button>
+                </form>
+
+                <!-- DYNAMIC CATEGORY TABLE -->
+                <div class="space-y-3">
+                  <h4 class="text-xs font-black text-stone-550 uppercase tracking-widest border-b-4 border-black pb-2">📂 Grade Breakdown</h4>
+                  <div id="weighted-table-list" class="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
+                    <!-- Dynamic Rows Insertion -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- TARGET STATUS CLASSIFIER -->
+              <div class="mt-6 p-4 border-4 border-black rounded-[20px] bg-[#FFFBEB]">
+                <div class="flex justify-between items-center">
+                  <span class="text-[10px] font-black uppercase text-stone-500">Weight Total check:</span>
+                  <span id="weight-total-badge" class="font-mono font-black text-xs px-2.5 py-1 rounded-md border-2 border-black bg-white">0%</span>
+                </div>
+                <p id="weight-total-help" class="text-[10px] font-bold text-stone-500 mt-2.5 uppercase tracking-wide">
+                  Ensure component weights total exactly 100% for an accurate overall course grade average!
+                </p>
+              </div>
+            </div>
+
+            <!-- RIGHT COLUMN: MULTIPLE STAT METERS -->
+            <div class="lg:col-span-5 space-y-6">
+              
+              <!-- WEIGHTED SCOREBOARD -->
+              <div class="bg-white border-8 border-black rounded-[36px] p-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] flex flex-col justify-center items-center text-center">
+                <span class="text-[10px] font-black uppercase text-stone-500 tracking-wider">Weighted Course Mark</span>
+                
+                <h2 id="weighted-avg-display" class="text-7xl font-black font-mono tracking-tighter text-[#1A1A1A] my-3">
+                  0.0%
+                </h2>
+
+                <div class="inline-flex items-center gap-2 bg-[#4ECDC4] border-4 border-black text-black px-4 py-2 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <span class="text-xs font-black uppercase">LetterGrade:</span>
+                  <span id="weighted-letter-display" class="font-mono font-black text-base bg-white border-2 border-black rounded-lg px-2.5 py-0.5">F</span>
+                </div>
+              </div>
+
+              <!-- WHAT-IF BOOSTER BONUS BOARD -->
+              <div class="bg-white border-8 border-black rounded-[36px] p-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)] space-y-4">
+                <div>
+                  <h4 class="text-xs font-black text-stone-900 uppercase tracking-widest flex items-center gap-2">🧪 "What-If" Grade Booster</h4>
+                  <p class="text-[10px] text-stone-500 font-extrabold uppercase mt-1">Simulate tasks to boost your score instantly</p>
+                </div>
+                
+                <div class="space-y-2.5">
+                  <button onclick="toggleBooster('b1')" id="booster-b1" class="booster-btn w-full text-left p-3.5 rounded-2xl border-4 border-black flex items-center justify-between transition-all cursor-pointer bg-white">
+                    <div class="flex items-center gap-3">
+                      <span class="text-lg">📝</span>
+                      <div>
+                        <span class="text-xs font-black block">Resubmit Weakest Essay</span>
+                        <span class="text-[9px] font-black text-[#FF6B6B] uppercase">Potential boost: +3.0%</span>
+                      </div>
+                    </div>
+                    <div id="booster-check-b1" class="w-5 h-5 rounded border-2 border-black bg-white flex items-center justify-center"></div>
+                  </button>
+
+                  <button onclick="toggleBooster('b2')" id="booster-b2" class="booster-btn w-full text-left p-3.5 rounded-2xl border-4 border-black flex items-center justify-between transition-all cursor-pointer bg-white">
+                    <div class="flex items-center gap-3">
+                      <span class="text-lg">📚</span>
+                      <div>
+                        <span class="text-xs font-black block">Complete Extra Credit Math Kit</span>
+                        <span class="text-[9px] font-black text-[#FF6B6B] uppercase">Potential boost: +5.0%</span>
+                      </div>
+                    </div>
+                    <div id="booster-check-b2" class="w-5 h-5 rounded border-2 border-black bg-white flex items-center justify-center"></div>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- MODULE: GPA SETUP TAB -->
+        <section id="pane-gpa" class="tab-pane hidden space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- LEFT COLUMN: COURSE SETUP FORM -->
+            <div class="lg:col-span-5 bg-white border-8 border-black rounded-[36px] p-6 shadow-[8px_8px_0px_0px_rgba(26,26,26,1)]">
+              <div class="flex items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-xl font-black text-[#1A1A1A] tracking-tighter uppercase">🎓 GPA Parameters</h3>
+                  <p class="text-xs text-stone-500 font-extrabold uppercase steering">Switch scaling systems</p>
+                </div>
+
+                <div class="flex bg-[#FFFBEB] border-4 border-black p-1 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                  <button id="gpa-scale-hs" onclick="setGpaLevel('hs')" class="px-3 py-1 text-[10px] font-black rounded-lg transition-all cursor-pointer">HS</button>
+                  <button id="gpa-scale-col" onclick="setGpaLevel('college')" class="px-3 py-1 text-[10px] font-black rounded-lg transition-all cursor-pointer">COLLEGE</button>
+                </div>
+              </div>
+
+              <!-- Scale Explainer Banner -->
+              <div id="gpa-explainer" class="bg-[#FFFBEB] border-4 border-black text-[#1A1A1A] rounded-2xl p-4 text-xs font-semibold leading-relaxed mb-6 shadow-[4px_4px_0px_0px_rgba(26,26,26,1)]">
+                Includes weighted boosts (+1.0) for active Advanced Placement (AP) courses.
+              </div>
+
+              <form onsubmit="addGpaCourse(event)" class="space-y-4">
+                <div>
+                  <label class="text-[10px] uppercase font-black text-[#1A1A1A] block mb-1">Course Name</label>
+                  <input type="text" id="gpa-course-name" placeholder="e.g. AP World History" class="w-full text-xs font-black border-4 border-black p-2.5 bg-white rounded-xl focus:bg-stone-50" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3"
